@@ -272,11 +272,6 @@ class ShortcutManager {
                     <option value="baidu" ${currentSearchEngine === 'baidu' ? 'selected' : ''}>百度</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label">背景图片</label>
-                <input type="url" id="bg-image-url" class="form-input" placeholder="输入图片URL">
-                <button type="button" class="btn btn-secondary" onclick="resetBackground()">重置默认背景</button>
-            </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">关闭</button>
             </div>
@@ -330,19 +325,6 @@ async function getWebsiteIcon(url) {
     }
 }
 
-// 背景图片管理
-function resetBackground() {
-    const defaultBg = 'https://images.unsplash.com/photo-1507525428034-b723a996f6ea?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-    document.body.style.backgroundImage = `url('${defaultBg}')`;
-    localStorage.removeItem('customBackground');
-}
-
-function setCustomBackground(url) {
-    if (url) {
-        document.body.style.backgroundImage = `url('${url}')`;
-        localStorage.setItem('customBackground', url);
-    }
-}
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', function() {
@@ -353,11 +335,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化快捷方式管理器
     window.shortcutManager = new ShortcutManager();
 
-    // 加载自定义背景
-    const customBg = localStorage.getItem('customBackground');
-    if (customBg) {
-        setCustomBackground(customBg);
-    }
 
     // 处理添加快捷方式表单提交
     document.addEventListener('submit', async function(e) {
@@ -385,13 +362,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 处理背景图片设置
+    // 处理搜索引擎设置
     document.addEventListener('change', function(e) {
-        if (e.target.id === 'bg-image-url') {
-            setCustomBackground(e.target.value);
-        }
-        
-        // 处理搜索引擎设置
         if (e.target.id === 'search-engine') {
             window.shortcutManager.setSearchEngine(e.target.value);
         }
