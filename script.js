@@ -1,4 +1,3 @@
-// 时间显示功能
 function updateTime() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
@@ -11,20 +10,16 @@ function updateTime() {
     }
 }
 
-// 搜索功能
 function handleSearch(event) {
     if (event.key === 'Enter') {
         const query = event.target.value.trim();
         if (query) {
-            // 检查是否是网址
             if (query.includes('.') && !query.includes(' ')) {
-                // 添加协议如果没有
                 if (!query.startsWith('http://') && !query.startsWith('https://')) {
                     query = 'https://' + query;
                 }
                 window.open(query, '_blank');
             } else {
-                // 使用选定的搜索引擎搜索
                 const shortcutManager = window.shortcutManager;
                 const searchUrl = shortcutManager.getSearchUrl(query);
                 window.open(searchUrl, '_blank');
@@ -34,7 +29,6 @@ function handleSearch(event) {
     }
 }
 
-// 快捷方式管理
 class ShortcutManager {
     constructor() {
         this.shortcuts = this.loadShortcuts();
@@ -47,19 +41,16 @@ class ShortcutManager {
     }
 
     bindEvents() {
-        // 搜索框事件
         const searchInput = document.querySelector('input[type="search"]');
         if (searchInput) {
             searchInput.addEventListener('keypress', handleSearch);
         }
 
-        // 添加快捷方式按钮
         const addBtn = document.getElementById('add-shortcut-btn');
         if (addBtn) {
             addBtn.addEventListener('click', () => this.showAddModal());
         }
 
-        // 设置按钮
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
             settingsBtn.addEventListener('click', () => this.showSettingsModal());
@@ -71,7 +62,6 @@ class ShortcutManager {
         if (saved) {
             return JSON.parse(saved);
         }
-        // 默认快捷方式
         return [
             {
                 name: 'Bilibili',
@@ -131,17 +121,14 @@ class ShortcutManager {
         const container = document.getElementById('shortcuts-container');
         if (!container) return;
 
-        // 清空现有内容（除了添加按钮）
         const addButton = container.querySelector('#add-shortcut-btn');
         container.innerHTML = '';
 
-        // 渲染快捷方式
         this.shortcuts.forEach((shortcut, index) => {
             const shortcutElement = this.createShortcutElement(shortcut, index);
             container.appendChild(shortcutElement);
         });
 
-        // 重新添加添加按钮
         if (addButton) {
             container.appendChild(addButton);
         }
@@ -164,7 +151,6 @@ class ShortcutManager {
             <p class="font-semibold text-sm">${shortcut.name}</p>
         `;
 
-        // 添加删除事件
         const deleteBtn = element.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -192,7 +178,6 @@ class ShortcutManager {
         this.saveShortcuts();
         this.renderShortcuts();
     }
-
 
     getDefaultIcon(url) {
         try {
@@ -228,11 +213,9 @@ class ShortcutManager {
             </div>
         `;
 
-        // 关闭按钮事件
         const closeBtn = modal.querySelector('.close-btn');
         closeBtn.addEventListener('click', () => this.hideModal(modal));
 
-        // 点击背景关闭
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 this.hideModal(modal);
@@ -293,17 +276,12 @@ class ShortcutManager {
 
 
 
-// 初始化应用
 document.addEventListener('DOMContentLoaded', function() {
-    // 更新时间
     updateTime();
     setInterval(updateTime, 1000);
 
-    // 初始化快捷方式管理器
     window.shortcutManager = new ShortcutManager();
 
-
-    // 处理添加快捷方式表单提交
     document.addEventListener('submit', function(e) {
         if (e.target.id === 'add-shortcut-form') {
             e.preventDefault();
@@ -320,7 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 处理搜索引擎设置
     document.addEventListener('change', function(e) {
         if (e.target.id === 'search-engine') {
             window.shortcutManager.setSearchEngine(e.target.value);
