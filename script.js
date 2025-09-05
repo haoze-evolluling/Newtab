@@ -174,7 +174,17 @@ class ShortcutManager {
         return element;
     }
 
-    addShortcut(name, url, icon = '', bgColor = 'bg-gray-100') {
+    async addShortcut(name, url, icon = '', bgColor = 'bg-gray-100') {
+        // 自动获取图标
+        if (!icon) {
+            try {
+                icon = await getWebsiteIcon(url);
+            } catch (error) {
+                console.log('获取图标失败，使用默认图标:', error);
+                icon = 'https://www.bing.com/s/a/h/default';
+            }
+        }
+        
         const newShortcut = {
             name,
             url: url.startsWith('http') ? url : `https://${url}`,
@@ -241,10 +251,7 @@ class ShortcutManager {
                 <div class="form-group">
                     <label class="form-label" for="shortcut-url">网址</label>
                     <input type="url" id="shortcut-url" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="shortcut-icon">图标URL（可选）</label>
-                    <input type="url" id="shortcut-icon" class="form-input">
+                    <small class="text-gray-500 text-sm">图标将自动从网站获取</small>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">取消</button>
@@ -353,15 +360,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 处理添加快捷方式表单提交
-    document.addEventListener('submit', function(e) {
+    document.addEventListener('submit', async function(e) {
         if (e.target.id === 'add-shortcut-form') {
             e.preventDefault();
             const name = document.getElementById('shortcut-name').value;
             const url = document.getElementById('shortcut-url').value;
-            const icon = document.getElementById('shortcut-icon').value;
             
-            window.shortcutManager.addShortcut(name, url, icon);
-            e.target.closest('.modal').remove();
+            // 显示加载状态
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '添加中...';
+            submitBtn.disabled = true;
+            
+            try {
+                await window.shortcutManager.addShortcut(name, url);
+                e.target.closest('.modal').remove();
+            } catch (error) {
+                console.error('添加快捷方式失败:', error);
+                alert('添加快捷方式失败，请重试');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
         }
     });
 
