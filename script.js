@@ -76,25 +76,25 @@ class ShortcutManager {
             {
                 name: 'Bilibili',
                 url: 'https://www.bilibili.com',
-                icon: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA_mmTnMtPCj_MKK8FsWpnxBhWVNdFVSiWW4BujyQUtdqt-vuveed8HRMY_BJ7Tbee6tu3Ow1qHpL4tdDShGiTXDrpeHhVQhkkcoDr66vJOrPq2sTWA_6btNNYbmfUuFqBccJ5hzS8SsAOmTIOS3yFDMG0y-tQZW38g8jh1WFF-NQ3dJXY0K0iRXTOp1v4i4KJZf-YdvFhQs06U_2-Mj06171PKnFw7ylgckIxcAFAms1wSsjPAHnXepmLPr-t-P9N3BG0wjW5OsK8',
+                icon: 'https://www.bilibili.com/favicon.ico',
                 bgColor: 'bg-blue-100'
             },
             {
                 name: '豆瓣',
                 url: 'https://www.douban.com',
-                icon: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAzbzL6CjpKypebzKMU3golrBJ_0cFdRXa71JbI_bpyA7ijSNRZFunCbl62YGR05VzJ1w-WT4mRbpceCiSMWk4AcUBVvNC9Bc1Fl3jEXOqqTe0bDOGzrgiFei4113l0JZMGg_-Lk00Zg94LQ-fRXdTsVaMVhUhUqqBZWBPjVqq7LZ5IEbfK_UmMYpQFXYRSMAlp2oFk-QZhw7azTJbAs74IXfVNFGf-FHC7ZaogkPnEQY7FauprVdC_jWRSqkE7mCX-WA76Hj8TI4I',
+                icon: 'https://www.douban.com/favicon.ico',
                 bgColor: 'bg-green-100'
             },
             {
                 name: 'YouTube',
                 url: 'https://www.youtube.com',
-                icon: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD2OG3oGytAWFs22FEem5ofQTD9c-c8Ukp9J5p9wpZufETiuy4_73FwLS1euJM_34ue6ea_k4E9hPFRlTyfCZsczh01XzF7dejaI5CWKvVZJ10SyGI7cs2cavOUIg6HTgVB1oMbAFEuMNrIT84kYSlAf21I1NcHe9V7mZQBLcs384gd4gbNxLsI5AfaDYfADuPH7ScbFA_vO1iOcW_i-c7v3UPDfNzGLS1tN6NppYqC8NFVqRD39tQZr1NsIBlBEL6cDv8DukgOlIo',
+                icon: 'https://www.youtube.com/favicon.ico',
                 bgColor: 'bg-red-100'
             },
             {
                 name: 'GitHub',
                 url: 'https://github.com',
-                icon: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDaej0kZi2YhFs28mx8m5K77w0N1d9vQ4lP0szb3XrydO2BJy6xyTOd1kY5CRsq_9K6IxE9v0_cIW4oF1KCOVIj6aaE3JOEn9iomt68FF31_w_fzW4NqJMgNtXJv4zQXeaHbpzKuXFLHZrYJuvHGh4x6Ht8GdEESmivCg6VE56hAqO6hhwrWfht1F4z75AbGo3NVa6e1K2-DRdIboQo4rv54CLgAmnNoYkAbRVzhfVwNovpb_qMgBElRyAIEpV08MrrIKgmkEPoO2E',
+                icon: 'https://github.com/favicon.ico',
                 bgColor: 'bg-gray-200'
             }
         ];
@@ -158,7 +158,8 @@ class ShortcutManager {
                 <span class="material-symbols-outlined text-sm">close</span>
             </div>
             <div class="flex items-center justify-center size-16 ${shortcut.bgColor} rounded-full mb-3">
-                <img alt="${shortcut.name}" class="h-8 w-8" src="${shortcut.icon}"/>
+                <img alt="${shortcut.name}" class="h-8 w-8" src="${shortcut.icon}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+                <div class="icon-fallback">${shortcut.name.charAt(0).toUpperCase()}</div>
             </div>
             <p class="font-semibold text-sm">${shortcut.name}</p>
         `;
@@ -300,28 +301,36 @@ async function getWebsiteIcon(url) {
         
         const domain = new URL(url).hostname;
         
-        // 尝试获取favicon.ico
-        const faviconUrl = `https://${domain}/favicon.ico`;
+        // 尝试多个图标源
+        const iconSources = [
+            `https://${domain}/favicon.ico`,
+            `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
+            `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+            `https://www.bing.com/s/a/h/${domain}`
+        ];
         
-        // 检查favicon是否存在
-        const response = await fetch(faviconUrl, { method: 'HEAD' });
-        if (response.ok) {
-            return faviconUrl;
+        // 依次尝试每个图标源
+        for (const iconUrl of iconSources) {
+            try {
+                const response = await fetch(iconUrl, { 
+                    method: 'HEAD',
+                    mode: 'cors'
+                });
+                if (response.ok) {
+                    return iconUrl;
+                }
+            } catch (e) {
+                // 继续尝试下一个源
+                continue;
+            }
         }
         
-        // 如果favicon不存在，使用必应的ico服务
-        return `https://www.bing.com/s/a/h/${domain}`;
+        // 如果所有方法都失败，使用默认图标
+        return 'https://www.google.com/s2/favicons?domain=default&sz=32';
         
     } catch (error) {
-        console.log('获取图标失败，使用必应ico服务:', error);
-        // 如果所有方法都失败，使用必应的ico服务
-        try {
-            const domain = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
-            return `https://www.bing.com/s/a/h/${domain}`;
-        } catch (e) {
-            // 最后的备用方案
-            return 'https://www.bing.com/s/a/h/default';
-        }
+        console.log('获取图标失败，使用默认图标:', error);
+        return 'https://www.google.com/s2/favicons?domain=default&sz=32';
     }
 }
 
