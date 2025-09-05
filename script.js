@@ -145,8 +145,7 @@ class ShortcutManager {
                 <span class="material-symbols-outlined text-sm">close</span>
             </div>
             <div class="flex items-center justify-center size-16 ${shortcut.bgColor} rounded-full mb-3">
-                <img alt="${shortcut.name}" class="h-8 w-8" src="${shortcut.icon}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
-                <div class="icon-fallback">${shortcut.name.charAt(0).toUpperCase()}</div>
+                <img alt="${shortcut.name}" class="h-8 w-8" src="${shortcut.icon}" onerror="this.src='no.png';"/>
             </div>
             <p class="font-semibold text-sm">${shortcut.name}</p>
         `;
