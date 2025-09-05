@@ -175,21 +175,11 @@ class ShortcutManager {
         return element;
     }
 
-    async addShortcut(name, url, icon = '', bgColor = 'bg-gray-100') {
-        // 自动获取图标
-        if (!icon) {
-            try {
-                icon = await getWebsiteIcon(url);
-            } catch (error) {
-                console.log('获取图标失败，使用默认图标:', error);
-                icon = 'https://www.bing.com/s/a/h/default';
-            }
-        }
-        
+    addShortcut(name, url, icon = '', bgColor = 'bg-gray-100') {
         const newShortcut = {
             name,
             url: url.startsWith('http') ? url : `https://${url}`,
-            icon,
+            icon: icon || this.getDefaultIcon(url),
             bgColor
         };
         this.shortcuts.push(newShortcut);
@@ -201,6 +191,16 @@ class ShortcutManager {
         this.shortcuts.splice(index, 1);
         this.saveShortcuts();
         this.renderShortcuts();
+    }
+
+
+    getDefaultIcon(url) {
+        try {
+            const domain = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+            return `https://${domain}/favicon.ico`;
+        } catch (e) {
+            return '';
+        }
     }
 
     showAddModal() {
@@ -291,48 +291,6 @@ class ShortcutManager {
     }
 }
 
-// 图标管理
-async function getWebsiteIcon(url) {
-    try {
-        // 确保URL有协议
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = 'https://' + url;
-        }
-        
-        const domain = new URL(url).hostname;
-        
-        // 尝试多个图标源
-        const iconSources = [
-            `https://${domain}/favicon.ico`,
-            `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
-            `https://icons.duckduckgo.com/ip3/${domain}.ico`,
-            `https://www.bing.com/s/a/h/${domain}`
-        ];
-        
-        // 依次尝试每个图标源
-        for (const iconUrl of iconSources) {
-            try {
-                const response = await fetch(iconUrl, { 
-                    method: 'HEAD',
-                    mode: 'cors'
-                });
-                if (response.ok) {
-                    return iconUrl;
-                }
-            } catch (e) {
-                // 继续尝试下一个源
-                continue;
-            }
-        }
-        
-        // 如果所有方法都失败，使用默认图标
-        return 'https://www.google.com/s2/favicons?domain=default&sz=32';
-        
-    } catch (error) {
-        console.log('获取图标失败，使用默认图标:', error);
-        return 'https://www.google.com/s2/favicons?domain=default&sz=32';
-    }
-}
 
 
 // 初始化应用
@@ -346,27 +304,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // 处理添加快捷方式表单提交
-    document.addEventListener('submit', async function(e) {
+    document.addEventListener('submit', function(e) {
         if (e.target.id === 'add-shortcut-form') {
             e.preventDefault();
             const name = document.getElementById('shortcut-name').value;
             const url = document.getElementById('shortcut-url').value;
             
-            // 显示加载状态
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = '添加中...';
-            submitBtn.disabled = true;
-            
             try {
-                await window.shortcutManager.addShortcut(name, url);
+                window.shortcutManager.addShortcut(name, url);
                 e.target.closest('.modal').remove();
             } catch (error) {
                 console.error('添加快捷方式失败:', error);
                 alert('添加快捷方式失败，请重试');
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
             }
         }
     });
