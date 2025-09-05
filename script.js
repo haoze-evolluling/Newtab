@@ -24,8 +24,9 @@ function handleSearch(event) {
                 }
                 window.open(query, '_blank');
             } else {
-                // 使用默认搜索引擎搜索
-                const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                // 使用选定的搜索引擎搜索
+                const shortcutManager = window.shortcutManager;
+                const searchUrl = shortcutManager.getSearchUrl(query);
                 window.open(searchUrl, '_blank');
             }
             event.target.value = '';
@@ -101,6 +102,29 @@ class ShortcutManager {
 
     saveShortcuts() {
         localStorage.setItem('shortcuts', JSON.stringify(this.shortcuts));
+    }
+
+    getSearchEngine() {
+        return localStorage.getItem('searchEngine') || 'bing';
+    }
+
+    setSearchEngine(engine) {
+        localStorage.setItem('searchEngine', engine);
+    }
+
+    getSearchUrl(query) {
+        const searchEngine = this.getSearchEngine();
+        const encodedQuery = encodeURIComponent(query);
+        
+        switch (searchEngine) {
+            case 'google':
+                return `https://www.google.com/search?q=${encodedQuery}`;
+            case 'baidu':
+                return `https://www.baidu.com/s?wd=${encodedQuery}`;
+            case 'bing':
+            default:
+                return `https://www.bing.com/search?q=${encodedQuery}`;
+        }
     }
 
     renderShortcuts() {
@@ -231,11 +255,20 @@ class ShortcutManager {
     }
 
     createSettingsForm() {
+        const currentSearchEngine = this.getSearchEngine();
         return `
+            <div class="form-group">
+                <label class="form-label">搜索引擎</label>
+                <select id="search-engine" class="form-input">
+                    <option value="bing" ${currentSearchEngine === 'bing' ? 'selected' : ''}>必应 (Bing)</option>
+                    <option value="google" ${currentSearchEngine === 'google' ? 'selected' : ''}>Google</option>
+                    <option value="baidu" ${currentSearchEngine === 'baidu' ? 'selected' : ''}>百度</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label class="form-label">背景图片</label>
                 <input type="url" id="bg-image-url" class="form-input" placeholder="输入图片URL">
-                <button type="button" class="btn btn-secondary" onclick="this.resetBackground()">重置默认背景</button>
+                <button type="button" class="btn btn-secondary" onclick="resetBackground()">重置默认背景</button>
             </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">关闭</button>
@@ -252,6 +285,41 @@ class ShortcutManager {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
         modal.remove();
+    }
+}
+
+// 图标管理
+async function getWebsiteIcon(url) {
+    try {
+        // 确保URL有协议
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+        
+        const domain = new URL(url).hostname;
+        
+        // 尝试获取favicon.ico
+        const faviconUrl = `https://${domain}/favicon.ico`;
+        
+        // 检查favicon是否存在
+        const response = await fetch(faviconUrl, { method: 'HEAD' });
+        if (response.ok) {
+            return faviconUrl;
+        }
+        
+        // 如果favicon不存在，使用必应的ico服务
+        return `https://www.bing.com/s/a/h/${domain}`;
+        
+    } catch (error) {
+        console.log('获取图标失败，使用必应ico服务:', error);
+        // 如果所有方法都失败，使用必应的ico服务
+        try {
+            const domain = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+            return `https://www.bing.com/s/a/h/${domain}`;
+        } catch (e) {
+            // 最后的备用方案
+            return 'https://www.bing.com/s/a/h/default';
+        }
     }
 }
 
@@ -276,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateTime, 1000);
 
     // 初始化快捷方式管理器
-    const shortcutManager = new ShortcutManager();
+    window.shortcutManager = new ShortcutManager();
 
     // 加载自定义背景
     const customBg = localStorage.getItem('customBackground');
@@ -292,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = document.getElementById('shortcut-url').value;
             const icon = document.getElementById('shortcut-icon').value;
             
-            shortcutManager.addShortcut(name, url, icon);
+            window.shortcutManager.addShortcut(name, url, icon);
             e.target.closest('.modal').remove();
         }
     });
@@ -301,6 +369,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('change', function(e) {
         if (e.target.id === 'bg-image-url') {
             setCustomBackground(e.target.value);
+        }
+        
+        // 处理搜索引擎设置
+        if (e.target.id === 'search-engine') {
+            window.shortcutManager.setSearchEngine(e.target.value);
         }
     });
 });

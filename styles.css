@@ -4,10 +4,11 @@
 
 body {
     font-family: 'Inter', 'Noto Sans SC', sans-serif;
-    background-image: url('https://images.unsplash.com/photo-1507525428034-b723a996f6ea?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background: linear-gradient(135deg, #a8e6cf 0%, #ffd3a5 50%, #fd6a9a 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    min-height: 100vh;
 }
 
 .search-bar-container {
