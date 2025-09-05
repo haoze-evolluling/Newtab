@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>新标签页</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900&amp;family=Noto+Sans+SC:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary-color: #0d7ff2;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1507525428034-b723a996f6ea?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .search-bar-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .shortcut-item {
+            background-color: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+        .shortcut-item:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-4px);
+        }
+        .delete-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            display: none;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 9999px;
+            padding: 2px;
+            cursor: pointer;
+        }
+        .shortcut-item:hover .delete-btn {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+<div class="relative flex size-full min-h-screen flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+<div class="w-full max-w-2xl">
+<div class="mb-8 text-center">
+<h1 class="text-7xl sm:text-8xl font-bold text-white text-shadow-lg" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">10:24</h1>
+</div>
+<div class="mb-12">
+<div class="relative search-bar-container rounded-full shadow-lg">
+<div class="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none">
+<span class="material-symbols-outlined text-gray-500">search</span>
+</div>
+<input class="w-full py-4 pl-14 pr-6 text-lg bg-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]" placeholder="搜索或输入网址" type="search"/>
+</div>
+</div>
+<div class="grid grid-cols-4 sm:grid-cols-5 gap-6">
+<a class="flex flex-col items-center justify-center p-4 rounded-xl shortcut-item shadow-md" href="#">
+<div class="delete-btn">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div class="flex items-center justify-center size-16 bg-blue-100 rounded-full mb-3">
+<img alt="Bilibili" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_mmTnMtPCj_MKK8FsWpnxBhWVNdFVSiWW4BujyQUtdqt-vuveed8HRMY_BJ7Tbee6tu3Ow1qHpL4tdDShGiTXDrpeHhVQhkkcoDr66vJOrPq2sTWA_6btNNYbmfUuFqBccJ5hzS8SsAOmTIOS3yFDMG0y-tQZW38g8jh1WFF-NQ3dJXY0K0iRXTOp1v4i4KJZf-YdvFhQs06U_2-Mj06171PKnFw7ylgckIxcAFAms1wSsjPAHnXepmLPr-t-P9N3BG0wjW5OsK8"/>
+</div>
+<p class="font-semibold text-sm">Bilibili</p>
+</a>
+<a class="flex flex-col items-center justify-center p-4 rounded-xl shortcut-item shadow-md" href="#">
+<div class="delete-btn">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div class="flex items-center justify-center size-16 bg-green-100 rounded-full mb-3">
+<img alt="Douban" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzbzL6CjpKypebzKMU3golrBJ_0cFdRXa71JbI_bpyA7ijSNRZFunCbl62YGR05VzJ1w-WT4mRbpceCiSMWk4AcUBVvNC9Bc1Fl3jEXOqqTe0bDOGzrgiFei4113l0JZMGg_-Lk00Zg94LQ-fRXdTsVaMVhUhUqqBZWBPjVqq7LZ5IEbfK_UmMYpQFXYRSMAlp2oFk-QZhw7azTJbAs74IXfVNFGf-FHC7ZaogkPnEQY7FauprVdC_jWRSqkE7mCX-WA76Hj8TI4I"/>
+</div>
+<p class="font-semibold text-sm">豆瓣</p>
+</a>
+<a class="flex flex-col items-center justify-center p-4 rounded-xl shortcut-item shadow-md" href="#">
+<div class="delete-btn">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div class="flex items-center justify-center size-16 bg-red-100 rounded-full mb-3">
+<img alt="YouTube" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2OG3oGytAWFs22FEem5ofQTD9c-c8Ukp9J5p9wpZufETiuy4_73FwLS1euJM_34ue6ea_k4E9hPFRlTyfCZsczh01XzF7dejaI5CWKvVZJ10SyGI7cs2cavOUIg6HTgVB1oMbAFEuMNrIT84kYSlAf21I1NcHe9V7mZQBLcs384gd4gbNxLsI5AfaDYfADuPH7ScbFA_vO1iOcW_i-c7v3UPDfNzGLS1tN6NppYqC8NFVqRD39tQZr1NsIBlBEL6cDv8DukgOlIo"/>
+</div>
+<p class="font-semibold text-sm">YouTube</p>
+</a>
+<a class="flex flex-col items-center justify-center p-4 rounded-xl shortcut-item shadow-md" href="#">
+<div class="delete-btn">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div class="flex items-center justify-center size-16 bg-gray-200 rounded-full mb-3">
+<img alt="GitHub" class="h-8 w-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaej0kZi2YhFs28mx8m5K77w0N1d9vQ4lP0szb3XrydO2BJy6xyTOd1kY5CRsq_9K6IxE9v0_cIW4oF1KCOVIj6aaE3JOEn9iomt68FF31_w_fzW4NqJMgNtXJv4zQXeaHbpzKuXFLHZrYJuvHGh4x6Ht8GdEESmivCg6VE56hAqO6hhwrWfht1F4z75AbGo3NVa6e1K2-DRdIboQo4rv54CLgAmnNoYkAbRVzhfVwNovpb_qMgBElRyAIEpV08MrrIKgmkEPoO2E"/>
+</div>
+<p class="font-semibold text-sm">GitHub</p>
+</a>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl shortcut-item shadow-md border-2 border-dashed border-gray-400 hover:border-gray-600">
+<div class="flex items-center justify-center size-16 bg-gray-100 rounded-full mb-3">
+<span class="material-symbols-outlined text-gray-500 text-4xl">add</span>
+</div>
+<p class="font-semibold text-sm text-gray-600">添加快捷方式</p>
+</button>
+</div>
+</div>
+<div class="absolute bottom-6 right-6">
+<button class="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">自定义</span>
+</button>
+</div>
+</div>
+
+</body></html>
